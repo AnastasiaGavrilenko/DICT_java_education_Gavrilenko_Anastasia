@@ -42,5 +42,28 @@ public class ChatBot {
         for (int i = 1; i <= userNumber; i++) {
             System.out.println(i + "!");
         }
+
+        // Проведення тесту
+        System.out.println("Let's test your programming knowledge.");
+        System.out.println("Why do we use methods in Java?");
+        System.out.println("1. To repeat a statement multiple times.");
+        System.out.println("2. To decompose a program into several small subroutines.");
+        System.out.println("3. To determine the execution time of a program.");
+        System.out.println("4. To interrupt the execution of a program.");
+
+        // Зчитуємо відповідь користувача
+        int userAnswer;
+        do {
+            userAnswer = Integer.parseInt(scanner.nextLine());
+            if (userAnswer != 2) {
+                System.out.println("Please, try again.");
+            }
+        } while (userAnswer != 2);
+
+        // Виводимо повідомлення про правильну відповідь
+        System.out.println("Congratulations, " + userName + "! You got it right!");
+
+        // Додаємо повідомлення про завершення
+        System.out.println("Goodbye, have a nice day!");
     }
 }
