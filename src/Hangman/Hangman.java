@@ -14,6 +14,7 @@ public class Hangman {
         // Змінні для відслідковування спроб та введених букв
         int remainingAttempts = 8;
         StringBuilder guessedWord = new StringBuilder("-".repeat(secretWord.length()));
+        StringBuilder attemptedLetters = new StringBuilder();
 
         // Виведення анонсу гри "HANGMAN"
         System.out.println("HANGMAN");
@@ -25,7 +26,10 @@ public class Hangman {
             Scanner scanner = new Scanner(System.in);
             String playerGuess = scanner.next();
 
-            if (secretWord.contains(playerGuess)) {
+            if (attemptedLetters.toString().contains(playerGuess)) {
+                // Гравець вже намагався вгадати цю букву
+                System.out.println("No improvements");
+            } else if (secretWord.contains(playerGuess)) {
                 // Гравець вгадав правильно
                 for (int i = 0; i < secretWord.length(); i++) {
                     if (secretWord.charAt(i) == playerGuess.charAt(0)) {
@@ -38,9 +42,12 @@ public class Hangman {
                 remainingAttempts--;
             }
 
-            // Перевірка, чи гравець вгадав всі літери
-            if (guessedWord.toString().equals(secretWord)) {
-                System.out.println("Congratulations! You've guessed the word: " + secretWord);
+            attemptedLetters.append(playerGuess);
+
+            // Перевірка, чи гравець вгадав всі літери та залишилася хоча б одна спроба
+            if (guessedWord.toString().equals(secretWord) && remainingAttempts > 0) {
+                System.out.println("You guessed the word!");
+                System.out.println("You survived!");
                 break;
             }
         }
@@ -48,7 +55,7 @@ public class Hangman {
         // Закінчення гри
         if (remainingAttempts == 0) {
             System.out.println("Thanks for playing!");
-            System.out.println("We'll see how well you did in the next stage");
+            System.out.println("You lost!");
         }
     }
 }
