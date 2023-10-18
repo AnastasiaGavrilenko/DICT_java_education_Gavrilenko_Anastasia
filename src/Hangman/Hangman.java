@@ -1,18 +1,24 @@
 package Hangman;
 
+import java.util.Random;
 import java.util.Scanner;
 
 public class Hangman {
     public static void main(String[] args) {
         // Вивести анонс гри
         System.out.println("HANGMAN");
-        System.out.println("Guess the word:");
 
-        // Слово, яке гравець повинен вгадати
-        String secretWord = "java";
+        // Список слів
+        String[] words = {"python", "java", "javascript", "kotlin"};
+
+        // Випадково вибрати слово зі списку
+        Random random = new Random();
+        int randomIndex = random.nextInt(words.length);
+        String secretWord = words[randomIndex];
 
         // Запросити гравця ввести слово
-        Scanner scanner = new  Scanner(System.in);
+        System.out.print("Guess the word: ");
+        Scanner scanner = new Scanner(System.in);
         String guessedWord = scanner.nextLine();
 
         // Перевірити, чи вгадане слово співпадає з секретним
@@ -23,7 +29,6 @@ public class Hangman {
         }
     }
 }
-
 
 
 
