@@ -1,10 +1,30 @@
-package Hangman; 
+package Hangman;
+
+import java.util.Scanner;
+
 public class Hangman {
     public static void main(String[] args) {
-        // Вивести анонс
+        // Вивести анонс гри
         System.out.println("HANGMAN");
-        System.out.println("The game will be available soon.");
+        System.out.println("Guess the word:");
 
-        // Тут ви можете додати логіку для головного меню та інші етапи гри.
+        // Слово, яке гравець повинен вгадати
+        String secretWord = "java";
+
+        // Запросити гравця ввести слово
+        Scanner scanner = new  Scanner(System.in);
+        String guessedWord = scanner.nextLine();
+
+        // Перевірити, чи вгадане слово співпадає з секретним
+        if (guessedWord.equals(secretWord)) {
+            System.out.println("You survived!");
+        } else {
+            System.out.println("You lost!");
+        }
     }
 }
+
+
+
+
+
