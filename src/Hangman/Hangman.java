@@ -18,6 +18,7 @@ public class Hangman {
 
         // Виведення анонсу гри "HANGMAN"
         System.out.println("HANGMAN");
+        System.out.println("Type \"play\" to play the game, \"exit\" to quit: ");
 
         // Головний цикл гри
         while (remainingAttempts > 0) {
@@ -57,8 +58,7 @@ public class Hangman {
 
         // Закінчення гри
         if (remainingAttempts == 0) {
-            System.out.println("Thanks for playing!");
-            System.out.println("You lost!");
+            System.out.println("Type \"play\" to play the game, \"exit\" to quit: ");
         }
     }
 }
