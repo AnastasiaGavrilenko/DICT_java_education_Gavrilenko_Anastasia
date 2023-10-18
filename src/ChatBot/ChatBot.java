@@ -14,10 +14,10 @@ public class ChatBot {
 
         // Запитуємо у користувача його ім'я
         System.out.println("Please, remind me your name.");
-        String MyName = scanner.nextLine();
+        String userName = scanner.nextLine();
 
         // Виводимо персональне привітання з іменем користувача
-        System.out.println("What a great name you have, MyName " + MyName + "!");
+        System.out.println("What a great name you have, MyName " + userName + "!");
 
         // Спробуємо вгадати вік користувача
         System.out.println("Let me guess your age.");
@@ -33,5 +33,14 @@ public class ChatBot {
 
         // Виводимо вгаданий вік
         System.out.println("Your age is " + userAge + "; that's a good time to start programming!");
+
+        // Запитуємо у користувача позитивне число
+        System.out.println("Now I will prove to you that I can count to any number you want!");
+        int userNumber = Integer.parseInt(scanner.nextLine());
+
+        // Починаємо підрахунок від 1 до введеного числа
+        for (int i = 1; i <= userNumber; i++) {
+            System.out.println(i + "!");
+        }
     }
 }
