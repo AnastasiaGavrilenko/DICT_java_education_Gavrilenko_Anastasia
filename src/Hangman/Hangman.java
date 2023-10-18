@@ -24,11 +24,14 @@ public class Hangman {
             System.out.println(guessedWord);
             System.out.print("Input a letter: > ");
             Scanner scanner = new Scanner(System.in);
-            String playerGuess = scanner.next();
+            String playerGuess = scanner.next().toLowerCase(); // Перетворюємо введену літеру в малу букву
 
-            if (attemptedLetters.toString().contains(playerGuess)) {
+            if (playerGuess.length() != 1 || !Character.isLowerCase(playerGuess.charAt(0))) {
+                // Перевірка, чи введено лише одну малу букву
+                System.out.println("You should input a single lowercase English letter");
+            } else if (attemptedLetters.toString().contains(playerGuess)) {
                 // Гравець вже намагався вгадати цю букву
-                System.out.println("No improvements");
+                System.out.println("You've already guessed this letter");
             } else if (secretWord.contains(playerGuess)) {
                 // Гравець вгадав правильно
                 for (int i = 0; i < secretWord.length(); i++) {
