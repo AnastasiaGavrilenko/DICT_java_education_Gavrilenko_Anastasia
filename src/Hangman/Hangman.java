@@ -16,8 +16,18 @@ public class Hangman {
         int randomIndex = random.nextInt(words.length);
         String secretWord = words[randomIndex];
 
+        // Підказка: показати перші дві літери і решту замінити дефісами
+        StringBuilder hint = new StringBuilder(secretWord.length());
+        for (int i = 0; i < secretWord.length(); i++) {
+            if (i < 2) {
+                hint.append(secretWord.charAt(i));
+            } else {
+                hint.append("-");
+            }
+        }
+
         // Запросити гравця ввести слово
-        System.out.print("Guess the word: ");
+        System.out.print("Guess the word " + hint + ": ");
         Scanner scanner = new Scanner(System.in);
         String guessedWord = scanner.nextLine();
 
@@ -29,7 +39,6 @@ public class Hangman {
         }
     }
 }
-
 
 
 
