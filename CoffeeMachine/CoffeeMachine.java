@@ -1,43 +1,55 @@
 package CoffeeMachine;
-
 import java.util.Scanner;
-
 public class CoffeeMachine {
-    private static int water = 400;
-    private static int milk = 540;
-    private static int coffeeBeans = 120;
-    private static int disposableCups = 9;
-    private static int money = 550;
+    private int water;
+    private int milk;
+    private int coffeeBeans;
+    private int disposableCups;
+    private int money;
 
+    public CoffeeMachine() {
+        this.water = 400;
+        this.milk = 540;
+        this.coffeeBeans = 120;
+        this.disposableCups = 9;
+        this.money = 550;
+    }
+    public void processUserInput(String action) {
+        switch (action) {
+            case "buy": buyCoffee();
+            break;
+            case "fill": fillMachine();
+            break;
+            case "take": takeMoney();
+            break;
+            case "remaining": displayMachineStatus();
+            break;
+            case "exit":
+                break;
+            default: System.out.println("Invalid action. Please try again.");
+        }
+    }
+    private void buyCoffee() {
+    }
+    private void fillMachine() {
+    }
+    private void takeMoney() {
+    }
+    private void displayMachineStatus() {
+    }
     public static void main(String[] args) {
+        CoffeeMachine coffeeMachine = new CoffeeMachine();
         Scanner scanner = new Scanner(System.in);
-        boolean isRunning = true;
 
+        boolean isRunning = true;
         while (isRunning) {
             System.out.println("Write action (buy, fill, take, remaining, exit):");
             String action = scanner.next();
+            coffeeMachine.processUserInput(action);
 
-            if (action.equals("buy")) {
-                buyCoffee(scanner);
-            } else if (action.equals("fill")) {
-                fillMachine(scanner);
-            } else if (action.equals("take")) {
-                takeMoney();
-            } else if (action.equals("remaining")) {
-                displayMachineStatus();
-            } else if (action.equals("exit")) {
+            if ("exit".equals(action)) {
                 isRunning = false;
-            } else {
-                System.out.println("Invalid action. Please try again.");
             }
         }
-    }
-    private static void buyCoffee(Scanner scanner) {
-    }
-    private static void fillMachine(Scanner scanner) {
-    }
-    private static void takeMoney() {
-    }
-    private static void displayMachineStatus() {
     }
 }
