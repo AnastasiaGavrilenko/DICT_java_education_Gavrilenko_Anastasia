@@ -6,50 +6,53 @@ public class TicTacToe {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter cells: ");
         String cells = scanner.nextLine();
-        printGameBoard(cells);
-        analyzeGameState(cells);
+        char[][] board = createBoard(cells);
+
+        printGameBoard(board);
+        makeMove(board, scanner);
+        printGameBoard(board);
     }
-    private static void printGameBoard(String cells) {
+    private static char[][] createBoard(String cells) {
+        char[][] board = new char[3][3];
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                board[i][j] = cells.charAt(i * 3 + j);
+            }
+        }
+        return board;
+    }
+    private static void printGameBoard(char[][] board) {
         System.out.println("---------");
         for (int i = 0; i < 3; i++) {
             System.out.print("| ");
             for (int j = 0; j < 3; j++) {
-                System.out.print(cells.charAt(i * 3 + j) + " ");
+                System.out.print(board[i][j] + " ");
             }
             System.out.println("|");
         }
         System.out.println("---------");
     }
-    private static void analyzeGameState(String cells) {
-        boolean xWins = isWinner(cells, 'X');
-        boolean oWins = isWinner(cells, 'O');
-        int xCount = countChar(cells, 'X');
-        int oCount = countChar(cells, 'O');
+    private static void makeMove(char[][] board, Scanner scanner) {
+        while (true) {
+            System.out.print("Enter the coordinates: ");
+            String input = scanner.nextLine();
+            String[] parts = input.split(" ");
 
-        if ((xWins && oWins) || Math.abs(xCount - oCount) > 1) {
-            System.out.println("Impossible");
-        } else if (xWins) {
-            System.out.println("X wins");
-        } else if (oWins) {
-            System.out.println("O wins");
-        } else if (cells.contains("_") || cells.contains(" ")) {
-            System.out.println("Game not finished");
-        } else {
-            System.out.println("Draw");
-        }
-    }
-    private static boolean isWinner(String cells, char player) {
-        String rowPattern = "" + player + player + player;
-        for (int i = 0; i < 3; i++) {
-            if (cells.substring(i * 3, i * 3 + 3).equals(rowPattern) ||
-                    (cells.charAt(i) == player && cells.charAt(i + 3) == player && cells.charAt(i + 6) == player)) {
-                return true;
+            try {
+                int x = Integer.parseInt(parts[0]) - 1;
+                int y = Integer.parseInt(parts[1]) - 1;
+
+                if (x < 0 || x >= 3 || y < 0 || y >= 3) {
+                    System.out.println("Coordinates should be from 1 to 3!");
+                } else if (board[x][y] != '_') {
+                    System.out.println("This cell is occupied! Choose another one!");
+                } else {
+                    board[x][y] = 'X';
+                    break;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("You should enter numbers!");
             }
         }
-        return (cells.charAt(0) == player && cells.charAt(4) == player && cells.charAt(8) == player) ||
-                (cells.charAt(2) == player && cells.charAt(4) == player && cells.charAt(6) == player);
-    }
-    private static int countChar(String str, char ch) {
-        return (int) str.chars().filter(c -> c == ch).count();
     }
 }
