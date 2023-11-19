@@ -4,22 +4,23 @@ public class TicTacToe {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter cells: ");
-        String cells = scanner.nextLine();
-        char[][] board = createBoard(cells);
-
-        printGameBoard(board);
-        makeMove(board, scanner);
-        printGameBoard(board);
-    }
-    private static char[][] createBoard(String cells) {
         char[][] board = new char[3][3];
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                board[i][j] = cells.charAt(i * 3 + j);
+                board[i][j] = ' ';
             }
         }
-        return board;
+        char currentPlayer = 'X';
+        boolean gameEnded = false;
+        while (!gameEnded) {
+            printGameBoard(board);
+            makeMove(board, scanner, currentPlayer);
+            gameEnded = isGameFinished(board, currentPlayer);
+            if (!gameEnded) {
+                currentPlayer = currentPlayer == 'X' ? 'O' : 'X';
+            }
+        }
+        printGameBoard(board);
     }
     private static void printGameBoard(char[][] board) {
         System.out.println("---------");
@@ -32,27 +33,66 @@ public class TicTacToe {
         }
         System.out.println("---------");
     }
-    private static void makeMove(char[][] board, Scanner scanner) {
+    private static void makeMove(char[][] board, Scanner scanner, char player) {
         while (true) {
             System.out.print("Enter the coordinates: ");
             String input = scanner.nextLine();
             String[] parts = input.split(" ");
 
             try {
-                int x = Integer.parseInt(parts[0]) - 1;
-                int y = Integer.parseInt(parts[1]) - 1;
+                int row = Integer.parseInt(parts[0]) - 1;
+                int col = Integer.parseInt(parts[1]) - 1;
 
-                if (x < 0 || x >= 3 || y < 0 || y >= 3) {
+                if (row < 0 || row >= 3 || col < 0 || col >= 3) {
                     System.out.println("Coordinates should be from 1 to 3!");
-                } else if (board[x][y] != '_') {
+                } else if (board[row][col] != ' ') {
                     System.out.println("This cell is occupied! Choose another one!");
                 } else {
-                    board[x][y] = 'X';
+                    board[row][col] = player;
                     break;
                 }
             } catch (NumberFormatException e) {
                 System.out.println("You should enter numbers!");
             }
         }
+    }
+    private static boolean isGameFinished(char[][] board, char currentPlayer) {
+        if (isWinner(board, currentPlayer)) {
+            System.out.println(currentPlayer + " wins");
+            return true;
+        } else if (isBoardFull(board)) {
+            System.out.println("Draw");
+            return true;
+        }
+        return false;
+    }
+    private static boolean isWinner(char[][] board, char player) {
+        for (int i = 0; i < 3; i++) {
+            if (board[i][0] == player && board[i][1] == player && board[i][2] == player) {
+                return true;
+            }
+            if (board[0][i] == player && board[1][i] == player && board[2][i] == player) {
+                return true;
+            }
+        }
+
+        if (board[0][0] == player && board[1][1] == player && board[2][2] == player) {
+            return true;
+        }
+        if (board[0][2] == player && board[1][1] == player && board[2][0] == player) {
+            return true;
+        }
+
+        return false;
+    }
+    private static boolean isBoardFull(char[][] board) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board[i][j] == ' ') {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
