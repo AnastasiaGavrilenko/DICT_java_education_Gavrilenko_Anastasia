@@ -8,47 +8,76 @@ public class MatrixProcessing {
             System.out.println("3. Multiply matrices");
             System.out.println("4. Transpose matrix");
             System.out.println("5. Calculate a determinant");
+            System.out.println("6. Inverse matrix");
             System.out.println("0. Exit");
             System.out.print("Your choice: ");
             int choice = scanner.nextInt();
             if (choice == 0) {
                 break;
-            } else if (choice == 5) {
+            } else if (choice == 6) {
                 System.out.print("Enter matrix size (n x n): ");
                 int n = scanner.nextInt();
-                int[][] matrix = new int[n][n];
+
+                double[][] matrix = new double[n][n];
+
                 System.out.println("Enter matrix:");
                 for (int i = 0; i < n; i++) {
                     for (int j = 0; j < n; j++) {
-                        matrix[i][j] = scanner.nextInt();
+                        matrix[i][j] = scanner.nextDouble();
                     }
                 }
-                int determinant = calculateDeterminant(matrix);
-                System.out.println("The result is: " + determinant);
+                double[][] inverseMatrix = calculateInverseMatrix(matrix);
+                if (inverseMatrix == null) {
+                    System.out.println("This matrix doesn't have an inverse.");
+                } else {
+                    System.out.println("The result is:");
+                    printMatrix(inverseMatrix);
+                }
             }
         }
     }
-    public static int calculateDeterminant(int[][] matrix) {
+    public static double[][] calculateInverseMatrix(double[][] matrix) {
         int n = matrix.length;
-        if (n == 1) {
-            return matrix[0][0];
-        }
-        if (n == 2) {
-            return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
-        }
-        int determinant = 0;
+        double[][] augmentedMatrix = new double[n][2 * n];
 
         for (int i = 0; i < n; i++) {
-            int[][] subMatrix = new int[n - 1][n - 1];
-            for (int j = 1; j < n; j++) {
-                for (int k = 0, l = 0; k < n; k++) {
-                    if (k == i) continue;
-                    subMatrix[j - 1][l++] = matrix[j][k];
+            for (int j = 0; j < n; j++) {
+                augmentedMatrix[i][j] = matrix[i][j];
+            }
+            augmentedMatrix[i][n + i] = 1;
+        }
+        for (int i = 0; i < n; i++) {
+            double pivot = augmentedMatrix[i][i];
+            if (pivot == 0) {
+                return null; // Matrix is singular
+            }
+            for (int j = 0; j < 2 * n; j++) {
+                augmentedMatrix[i][j] /= pivot;
+            }
+            for (int k = 0; k < n; k++) {
+                if (k != i) {
+                    double factor = augmentedMatrix[k][i];
+                    for (int j = 0; j < 2 * n; j++) {
+                        augmentedMatrix[k][j] -= factor * augmentedMatrix[i][j];
+                    }
                 }
             }
-            int sign = (i % 2 == 0) ? 1 : -1;
-            determinant += sign * matrix[0][i] * calculateDeterminant(subMatrix);
         }
-        return determinant;
+        double[][] inverseMatrix = new double[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                inverseMatrix[i][j] = augmentedMatrix[i][n + j];
+            }
+        }
+        return inverseMatrix;
+    }
+    public static void printMatrix(double[][] matrix) {
+        int n = matrix.length;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                System.out.printf("%.2f ", matrix[i][j]);
+            }
+            System.out.println();
+        }
     }
 }
