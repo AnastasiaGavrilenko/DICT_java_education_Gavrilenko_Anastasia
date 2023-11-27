@@ -2,38 +2,29 @@ import java.util.Scanner;
 public class MatrixProcessing {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        int rowsA = scanner.nextInt();
-        int columnsA = scanner.nextInt();
-        int[][] matrixA = new int[rowsA][columnsA];
-        readMatrix(scanner, matrixA, rowsA, columnsA);
-        int rowsB = scanner.nextInt();
-        int columnsB = scanner.nextInt();
-        if (rowsA != rowsB || columnsA != columnsB) {
-            System.out.println("ERROR");
-            return;
-        }
-        int[][] matrixB = new int[rowsB][columnsB];
-        readMatrix(scanner, matrixB, rowsB, columnsB);
-        int[][] sumMatrix = addMatrices(matrixA, matrixB);
-        printMatrix(sumMatrix);
-    }
-    private static void readMatrix(Scanner scanner, int[][] matrix, int rows, int columns) {
+        int rows = scanner.nextInt();
+        int columns = scanner.nextInt();
+        int[][] matrix = new int[rows][columns];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 matrix[i][j] = scanner.nextInt();
             }
         }
+        int constant = scanner.nextInt();
+        int[][] result = multiplyMatrixProcessing(matrix, constant);
+        printMatrix(result);
     }
-    private static int[][] addMatrices(int[][] matrixA, int[][] matrixB) {
-        int rows = matrixA.length;
-        int columns = matrixA[0].length;
-        int[][] sum = new int[rows][columns];
+    private static int[][] multiplyMatrixProcessing(int[][] matrix, int constant) {
+        int rows = matrix.length;
+        int columns = matrix[0].length;
+        int[][] result = new int[rows][columns];
+
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                sum[i][j] = matrixA[i][j] + matrixB[i][j];
+                result[i][j] = matrix[i][j] * constant;
             }
         }
-        return sum;
+        return result;
     }
     private static void printMatrix(int[][] matrix) {
         for (int[] row : matrix) {
