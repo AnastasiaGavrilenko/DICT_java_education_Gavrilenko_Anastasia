@@ -7,111 +7,48 @@ public class MatrixProcessing {
             System.out.println("2. Multiply matrix by a constant");
             System.out.println("3. Multiply matrices");
             System.out.println("4. Transpose matrix");
+            System.out.println("5. Calculate a determinant");
             System.out.println("0. Exit");
             System.out.print("Your choice: ");
             int choice = scanner.nextInt();
             if (choice == 0) {
                 break;
-            } else if (choice == 4) {
-                System.out.println("1. Main diagonal");
-                System.out.println("2. Side diagonal");
-                System.out.println("3. Vertical line");
-                System.out.println("4. Horizontal line");
-                System.out.print("Your choice: ");
-                int transposeChoice = scanner.nextInt();
-                System.out.print("Enter matrix size (rows columns): ");
-                int rows = scanner.nextInt();
-                int cols = scanner.nextInt();
-                int[][] matrix = new int[rows][cols];
+            } else if (choice == 5) {
+                System.out.print("Enter matrix size (n x n): ");
+                int n = scanner.nextInt();
+                int[][] matrix = new int[n][n];
                 System.out.println("Enter matrix:");
-                for (int i = 0; i < rows; i++) {
-                    for (int j = 0; j < cols; j++) {
+                for (int i = 0; i < n; i++) {
+                    for (int j = 0; j < n; j++) {
                         matrix[i][j] = scanner.nextInt();
                     }
                 }
-                int[][] transposedMatrix;
-                switch (transposeChoice) {
-                    case 1:
-                        transposedMatrix = transposeMainDiagonal(matrix);
-                        break;
-                    case 2:
-                        transposedMatrix = transposeSideDiagonal(matrix);
-                        break;
-                    case 3:
-                        transposedMatrix = transposeVertical(matrix);
-                        break;
-                    case 4:
-                        transposedMatrix = transposeHorizontal(matrix);
-                        break;
-                    default:
-                        System.out.println("Invalid choice");
-                        continue;
+                int determinant = calculateDeterminant(matrix);
+                System.out.println("The result is: " + determinant);
+            }
+        }
+    }
+    public static int calculateDeterminant(int[][] matrix) {
+        int n = matrix.length;
+        if (n == 1) {
+            return matrix[0][0];
+        }
+        if (n == 2) {
+            return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+        }
+        int determinant = 0;
+
+        for (int i = 0; i < n; i++) {
+            int[][] subMatrix = new int[n - 1][n - 1];
+            for (int j = 1; j < n; j++) {
+                for (int k = 0, l = 0; k < n; k++) {
+                    if (k == i) continue;
+                    subMatrix[j - 1][l++] = matrix[j][k];
                 }
-                System.out.println("The result is:");
-                printMatrix(transposedMatrix);
             }
+            int sign = (i % 2 == 0) ? 1 : -1;
+            determinant += sign * matrix[0][i] * calculateDeterminant(subMatrix);
         }
-    }
-    public static int[][] transposeMainDiagonal(int[][] matrix) {
-        int rows = matrix.length;
-        int cols = matrix[0].length;
-        int[][] transposedMatrix = new int[cols][rows];
-
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                transposedMatrix[j][i] = matrix[i][j];
-            }
-        }
-        return transposedMatrix;
-    }
-    public static int[][] transposeSideDiagonal(int[][] matrix) {
-        int rows = matrix.length;
-        int cols = matrix[0].length;
-        int[][] transposedMatrix = new int[cols][rows];
-
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                transposedMatrix[cols - 1 - j][rows - 1 - i] = matrix[i][j];
-            }
-        }
-
-        return transposedMatrix;
-    }
-
-    public static int[][] transposeVertical(int[][] matrix) {
-        int rows = matrix.length;
-        int cols = matrix[0].length;
-        int[][] transposedMatrix = new int[rows][cols];
-
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                transposedMatrix[i][j] = matrix[i][cols - 1 - j];
-            }
-        }
-
-        return transposedMatrix;
-    }
-
-    public static int[][] transposeHorizontal(int[][] matrix) {
-        int rows = matrix.length;
-        int cols = matrix[0].length;
-        int[][] transposedMatrix = new int[rows][cols];
-
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                transposedMatrix[i][j] = matrix[rows - 1 - i][j];
-            }
-        }
-
-        return transposedMatrix;
-    }
-
-    public static void printMatrix(int[][] matrix) {
-        for (int[] row : matrix) {
-            for (int num : row) {
-                System.out.print(num + " ");
-            }
-            System.out.println();
-        }
+        return determinant;
     }
 }
