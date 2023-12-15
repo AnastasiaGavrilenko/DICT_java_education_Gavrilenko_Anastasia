@@ -1,99 +1,83 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Random;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
 public class RockPaperScissors {
+    private static int userScore = 0;
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Enter your name: > ");
+        System.out.print("Enter your name: ");
         String userName = scanner.nextLine();
-
-        int userScore = readUserScore(userName);
-
         System.out.println("Hello, " + userName);
+
+        Map<String, Integer> options = readUserOptions(scanner);
+        System.out.println("Okay, let's start.");
 
         while (true) {
             System.out.print("> ");
-            String userInput = scanner.nextLine().toLowerCase();
+            String userChoice = scanner.nextLine();
 
-            if (userInput.equals("!exit")) {
+            if ("!exit".equals(userChoice)) {
                 System.out.println("Bye!");
                 break;
-            } else if (userInput.equals("!rating")) {
+            }
+
+            if (options.containsKey(userChoice)) {
+                playRound(userChoice, options);
+                System.out.println("!rating");
                 System.out.println("Your rating: " + userScore);
-            } else if (userInput.equals("rock") || userInput.equals("paper") || userInput.equals("scissors")) {
-                playGame(userInput, userName, userScore);
             } else {
                 System.out.println("Invalid input");
             }
         }
     }
 
-    private static void playGame(String userChoice, String userName, int userScore) {
-        String computerChoice = getRandomChoice();
-        String result = getResult(userChoice, computerChoice);
-        int roundScore = calculateRoundScore(result);
-        int newScore = userScore + roundScore;
-        writeUserScore(userName, newScore);
+    private static Map<String, Integer> readUserOptions(Scanner scanner) {
+        System.out.print("Enter options (comma-separated): ");
+        String input = scanner.nextLine();
+        if (input.isEmpty()) {
+            return Map.of("rock", 1, "paper", 2, "scissors", 3);
+        }
 
-        System.out.println(result);
+        String[] optionsArray = input.split(", ");
+        Map<String, Integer> options = new HashMap<>();
+
+        for (int i = 0; i < optionsArray.length; i++) {
+            options.put(optionsArray[i], i + 1);
+        }
+
+        return options;
     }
 
-    private static String getRandomChoice() {
-        String[] choices = {"rock", "paper", "scissors"};
-        Random random = new Random();
-        int index = random.nextInt(choices.length);
-        return choices[index];
-    }
+    private static void playRound(String userChoice, Map<String, Integer> options) {
+        String[] optionsArray = options.keySet().toArray(new String[0]);
+        int computerChoiceIndex = (int) (Math.random() * optionsArray.length);
+        String computerChoice = optionsArray[computerChoiceIndex];
 
-    private static String getResult(String userChoice, String computerChoice) {
-        if (userChoice.equals(computerChoice)) {
-            return "There is a draw (" + computerChoice + ")";
-        } else if (
-                (userChoice.equals("rock") && computerChoice.equals("scissors")) ||
-                        (userChoice.equals("paper") && computerChoice.equals("rock")) ||
-                        (userChoice.equals("scissors") && computerChoice.equals("paper"))
-        ) {
-            return "Well done. The computer chose " + computerChoice + " and failed";
+        int result = determineWinner(userChoice, computerChoice, options);
+        if (result == 0) {
+            System.out.println("There is a draw (" + computerChoice + ")");
+        } else if (result == 1) {
+            System.out.println("Well done. The computer chose " + computerChoice + " and failed");
+            userScore += 100;
         } else {
-            return "Sorry, but the computer chose " + computerChoice;
+            System.out.println("Sorry, but the computer chose " + computerChoice);
         }
     }
 
-    private static int calculateRoundScore(String result) {
-        if (result.contains("draw")) {
-            return 50;
-        } else if (result.contains("Well done")) {
-            return 100;
-        } else {
+    private static int determineWinner(String userChoice, String computerChoice, Map<String, Integer> options) {
+        int userIndex = options.get(userChoice);
+        int computerIndex = options.get(computerChoice);
+
+        int halfSize = options.size() / 2;
+        if (userIndex == computerIndex) {
             return 0;
-        }
-    }
-
-    private static int readUserScore(String userName) {
-        try (BufferedReader reader = new BufferedReader(new FileReader("out/rating.txt"))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(" ");
-                if (parts.length == 2 && parts[0].equals(userName)) {
-                    return Integer.parseInt(parts[1]);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
-    private static void writeUserScore(String userName, int userScore) {
-        try (FileWriter writer = new FileWriter("rating.txt", true)) {
-            writer.write(userName + " " + userScore + System.lineSeparator());
-        } catch (IOException e) {
-            e.printStackTrace();
+        } else if ((userIndex > computerIndex && userIndex - computerIndex <= halfSize) ||
+                (userIndex < computerIndex && computerIndex - userIndex > halfSize)) {
+            return 1;
+        } else {
+            return -1;
         }
     }
 }
