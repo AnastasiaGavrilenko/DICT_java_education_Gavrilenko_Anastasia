@@ -4,11 +4,24 @@ import java.util.Scanner;
 public class RockPaperScissors {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("> ");
-        String userChoice = scanner.nextLine().toLowerCase();
+
+        while (true) {
+            System.out.print("> ");
+            String userInput = scanner.nextLine().toLowerCase();
+
+            if (userInput.equals("!exit")) {
+                System.out.println("Bye!");
+                break;
+            } else if (userInput.equals("rock") || userInput.equals("paper") || userInput.equals("scissors")) {
+                playGame(userInput);
+            } else {
+                System.out.println("Invalid input");
+            }
+        }
+    }
+    private static void playGame(String userChoice) {
         String computerChoice = getRandomChoice();
         String result = getResult(userChoice, computerChoice);
-        // Вивести підсумковий рядок
         System.out.println(result);
     }
     private static String getRandomChoice() {
@@ -31,3 +44,4 @@ public class RockPaperScissors {
         }
     }
 }
+
