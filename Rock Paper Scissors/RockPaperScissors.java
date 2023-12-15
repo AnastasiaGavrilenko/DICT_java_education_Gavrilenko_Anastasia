@@ -1,3 +1,4 @@
+import java.util.Random;
 import java.util.Scanner;
 
 public class RockPaperScissors {
@@ -5,21 +6,28 @@ public class RockPaperScissors {
         Scanner scanner = new Scanner(System.in);
         System.out.print("> ");
         String userChoice = scanner.nextLine().toLowerCase();
-        String computerChoice = getComputerChoice(userChoice);
-
-        // Вивести результат
-        System.out.println("Sorry, but the computer chose " + computerChoice);
+        String computerChoice = getRandomChoice();
+        String result = getResult(userChoice, computerChoice);
+        // Вивести підсумковий рядок
+        System.out.println(result);
     }
-    private static String getComputerChoice(String userChoice) {
-        switch (userChoice) {
-            case "rock":
-                return "paper";
-            case "paper":
-                return "scissors";
-            case "scissors":
-                return "rock";
-            default:
-                return ""; 
+    private static String getRandomChoice() {
+        String[] choices = {"rock", "paper", "scissors"};
+        Random random = new Random();
+        int index = random.nextInt(choices.length);
+        return choices[index];
+    }
+    private static String getResult(String userChoice, String computerChoice) {
+        if (userChoice.equals(computerChoice)) {
+            return "There is a draw (" + computerChoice + ")";
+        } else if (
+                (userChoice.equals("rock") && computerChoice.equals("scissors")) ||
+                        (userChoice.equals("paper") && computerChoice.equals("rock")) ||
+                        (userChoice.equals("scissors") && computerChoice.equals("paper"))
+        ) {
+            return "Well done. The computer chose " + computerChoice + " and failed";
+        } else {
+            return "Sorry, but the computer chose " + computerChoice;
         }
     }
 }
