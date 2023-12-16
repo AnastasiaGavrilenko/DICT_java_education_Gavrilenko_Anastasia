@@ -1,49 +1,71 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+import java.net.URL;
+import java.net.HttpURLConnection;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import org.json.JSONObject;
-import java.util.Scanner;
-
-
 public class CurrencyExchange {
+
+    private static double exchangeRate;
+
+    // Кеш для збереження обмінних курсів
+    private static Map<String, Double> exchangeRateCache = new HashMap<>();
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        // Зчитування коду валюти від користувача
-        System.out.print("Please, enter the currency code (e.g., USD): ");
-        String baseCurrency = scanner.next().toUpperCase();
+        String baseCurrency;
+        do {
+            // Отримання коду валюти для обміну
+            System.out.print("Please, enter the currency code (e.g., USD): ");
+            baseCurrency = scanner.next().toUpperCase();
 
-        // Зчитування кількості валюти від користувача
-        System.out.print("Please, enter the amount of " + baseCurrency + ": ");
-        double amount = scanner.nextDouble();
+            if (!baseCurrency.isEmpty()) {
+                // Отримання коду валюти, на яку хочете обміняти
+                System.out.print("Please, enter the target currency code: ");
+                String targetCurrency = scanner.next().toUpperCase();
 
-        // Виклик методу для отримання та виведення курсів обміну
-        getAndDisplayExchangeRates(baseCurrency, amount);
+                // Отримання суми грошей для обміну
+                System.out.print("Please, enter the amount of " + baseCurrency + ": ");
+                double amount = scanner.nextDouble();
+
+                // Перевірка кешу та виведення результату
+                checkAndExchange(baseCurrency, targetCurrency, amount);
+            }
+        } while (!baseCurrency.isEmpty());
 
         // Закриття Scanner
         scanner.close();
     }
 
-    private static void getAndDisplayExchangeRates(String baseCurrency, double amount) {
-        // Масив цільових валют
-        String[] targetCurrencies = {"USD", "EUR", "GBP", "JPY", "AUD"};
+    private static void checkAndExchange(String baseCurrency, String targetCurrency, double amount) {
+        // Створення ключа для кешу
+        String cacheKey = baseCurrency + "-" + targetCurrency;
 
-        // Виведення заголовку результатів
-        System.out.println("Exchange rates for " + amount + " " + baseCurrency + ":");
-        System.out.println("-------------------------");
-
-        // Виведення курсів обміну для кожної цільової валюти
-        for (String targetCurrency : targetCurrencies) {
-            getExchangeRateAndPrint(baseCurrency, targetCurrency, amount);
+        // Перевірка, чи є обмінний курс в кеші
+        if (exchangeRateCache.containsKey(cacheKey)) {
+            // Використання кешованого значення
+            double exchangeRate = exchangeRateCache.get(cacheKey);
+            double exchangedAmount = amount * exchangeRate;
+            System.out.println("Checking the cache...\nIt is in the cache!\nYou received " + exchangedAmount + " " + targetCurrency + ".");
+        } else {
+            // Якщо немає в кеші, робимо запит та розраховуємо суму
+            double exchangeRate = getExchangeRate(baseCurrency, targetCurrency);
+            if (exchangeRate != -1) {
+                double exchangedAmount = amount * exchangeRate;
+                System.out.println("Checking the cache...\nSorry, but it is not in the cache!\nYou received " + exchangedAmount + " " + targetCurrency + ".");
+                // Збереження в кеші
+                exchangeRateCache.put(cacheKey, exchangeRate);
+            }
         }
     }
 
-    private static void getExchangeRateAndPrint(String baseCurrency, String targetCurrency, double amount) {
+    private static double getExchangeRate(String baseCurrency, String targetCurrency) {
         try {
             // Створення URL для запиту
-            URL url = new URL("https://api.exchangerate-api.com/v4/latest/" + baseCurrency);
+            URL url = new URL("http://www.floatrates.com/daily/" + baseCurrency + ".json");
 
             // Отримання об'єкта HttpURLConnection
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -62,16 +84,27 @@ public class CurrencyExchange {
                 }
                 in.close();
 
-                // Обробка JSON-відповіді
                 JSONObject jsonResponse = new JSONObject(response.toString());
-                JSONObject rates = jsonResponse.getJSONObject("rates");
-                double exchangeRate = rates.getDouble(targetCurrency);
 
-                // Обчислення суми у цільовій валюті
-                double targetAmount = amount * exchangeRate;
+                // Оновлення наступного рядка для розпізнавання нової структури
+                JSONObject rates = jsonResponse.optJSONObject("rates");
 
-                // Виведення результату
-                System.out.println(amount + " " + baseCurrency + " is equal to " + targetAmount + " " + targetCurrency);
+                if (rates != null) {
+                    double exchangeRate = rates.optDouble(targetCurrency.toUpperCase());
+                    if (!Double.isNaN(exchangeRate)) {
+                        System.out.println("Exchange rate: " + exchangeRate);
+                    } else {
+                        System.out.println("Error: Exchange rate not available for the target currency.");
+                    }
+                } else {
+                    System.out.println("Error: 'rates' object not found in the JSON response.");
+                }
+
+                // Закриття з'єднання
+                connection.disconnect();
+
+                // Повернення обмінного курсу
+                return exchangeRate;
             } else {
                 System.out.println("Error fetching exchange rate. HTTP response code: " + responseCode);
             }
@@ -81,5 +114,8 @@ public class CurrencyExchange {
         } catch (Exception e) {
             System.out.println("Error fetching exchange rate: " + e.getMessage());
         }
+
+        // Повернення значення -1 у випадку помилки
+        return -1;
+       }
     }
-}
